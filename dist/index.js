@@ -35835,7 +35835,7 @@ async function authenticate(
   apiHost,
   retryAttempts = 3,
   validateToken = true,
-  oidcAudience = 'api://AzureADTokenExchange',
+  oidcAudience = '',
 ) {
   const baseUrl = `https://${apiHost || DEFAULT_API_HOST}`;
   let idToken;
@@ -35920,7 +35920,7 @@ async function validateApiToken(token, baseUrl) {
   const response = await axios.get(`${baseUrl}/v1/user/self/`, {
     headers: {
       accept: "application/json",
-      "X-Api-Key": token,
+      Authorization: `Bearer ${token}`,
     },
     timeout: REQUEST_TIMEOUT_MS,
   });
@@ -45712,7 +45712,8 @@ async function run() {
       10,
     );
     const oidcTokenValidate = core.getBooleanInput("oidc-token-validate");
-  const oidcAudience = core.getInput("oidc-audience");
+  const oidcAudienceInput = core.getInput("oidc-audience");
+  const oidcAudience = oidcAudienceInput || `https://github.com/${process.env.GITHUB_REPOSITORY_OWNER || ''}`;
 
     // Cloudsmith CLI optional inputs
     const apiHost = core.getInput("api-host");
